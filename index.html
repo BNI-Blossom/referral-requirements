@@ -295,14 +295,6 @@
                             </th>
                             <th>需要的引薦</th>
                             <th>其他資訊</th>
-                            <th>
-                                <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                                    </svg>
-                                    更新時間
-                                </div>
-                            </th>
                         </tr>
                     </thead>
                     <tbody id="dataBody">
@@ -650,11 +642,6 @@
                     <td>
                         <div class="info-cell" title="${row.其他資訊}" style="white-space: normal; overflow: visible; text-overflow: clip;">
                             ${formatText(row.其他資訊)}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="date-cell">
-                            ${formatDate(row.時間戳記)}
                         </div>
                     </td>
                 `;
