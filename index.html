@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資料管理系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 50%, #f3e5f5 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .load-section {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e5e7eb;
+        }
+
+        .load-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 auto;
+        }
+
+        .load-btn:hover:not(:disabled) {
+            background: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+        }
+
+        .load-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #dc2626;
+        }
+
+        .data-section {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            display: none;
+        }
+
+        .data-header {
+            background: #f9fafb;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .data-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.875rem;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .avatar {
+            width: 2rem;
+            height: 2rem;
+            background: #dbeafe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2563eb;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .name-cell {
+            display: flex;
+            align-items: center;
+        }
+
+        .name-cell span {
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #f3e8ff;
+            color: #7c3aed;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .date-cell {
+            font-family: 'Courier New', monospace;
+            color: #374151;
+        }
+
+        .info-cell {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #374151;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6b7280;
+        }
+
+        .empty-state svg {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 auto 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .load-section {
+                padding: 1.5rem;
+            }
+
+            th, td {
+                padding: 0.75rem 1rem;
+            }
+
+            .info-cell {
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>資料管理系統</h1>
+            <p>自動載入並顯示 CSV 資料</p>
+        </div>
+
+        <!-- Load Section -->
+        <div class="load-section">
+            <div style="text-align: center;">
+                <p style="margin-bottom: 1rem; color: #6b7280;">
+                    資料來源: <strong>https://docs.google.com/spreadsheets/d/e/2PACX-1vRZC1D4RKwyAwSddozAhZZeSQz_pszqZm1PeWRr11CCdECztOUnuLL02SA8cNa5AYrXRjZuKMNrjn9H/pub?gid=1107386692&single=true&output=csv</strong>
+                </p>
+                <button id="loadBtn" class="load-btn">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V10.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3zM3.5 9.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1-.5-.5v-4z"/>
+                    </svg>
+                    載入資料
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMsg" class="error" style="display: none;"></div>
+
+        <!-- Data Table -->
+        <div id="dataSection" class="data-section">
+            <div class="data-header">
+                <h2>
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+                        <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+                    </svg>
+                    資料列表 (<span id="recordCount">0</span> 筆記錄)
+                </h2>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                                    </svg>
+                                    名字
+                                </div>
+                            </th>
+                            <th>需要的引薦</th>
+                            <th>其他資訊</th>
+                            <th>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                    </svg>
+                                    更新時間
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+            <svg fill="currentColor" viewBox="0 0 16 16">
+                <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+            </svg>
+            <h3>尚未載入資料</h3>
+            <p>點擊上方按鈕載入 CSV 資料</p>
+        </div>
+    </div>
+
+    <script>
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRZC1D4RKwyAwSddozAhZZeSQz_pszqZm1PeWRr11CCdECztOUnuLL02SA8cNa5AYrXRjZuKMNrjn9H/pub?gid=1107386692&single=true&output=csv';
+        
+        let csvData = [];
+
+        // DOM 元素
+        const loadBtn = document.getElementById('loadBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const dataSection = document.getElementById('dataSection');
+        const dataBody = document.getElementById('dataBody');
+        const recordCount = document.getElementById('recordCount');
+        const emptyState = document.getElementById('emptyState');
+
+        // 解析 CSV 文字
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const rows = [];
+            
+            // 跳過標題行，從第二行開始解析
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                if (values.length >= 4) {
+                    const timeString = values[0];
+                    let parsedDate;
+                    
+                    // 使用相同的日期解析邏輯
+                    try {
+                        if (timeString.includes('上午') || timeString.includes('下午')) {
+                            // 處理中文 AM/PM 格式
+                            let cleanedString = timeString.replace('上午', ' AM').replace('下午', ' PM');
+                            parsedDate = new Date(cleanedString);
+                        } else {
+                            parsedDate = new Date(timeString);
+                        }
+                        
+                        // 如果還是無效，嘗試其他格式
+                        if (isNaN(parsedDate.getTime())) {
+                            const altFormat = timeString.replace(/\//g, '-');
+                            parsedDate = new Date(altFormat);
+                        }
+                        
+                        // 手動解析格式
+                        if (isNaN(parsedDate.getTime())) {
+                            const match = timeString.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})\s+(.+)/);
+                            if (match) {
+                                const [, year, month, day, timeStr] = match;
+                                let hour, minute, second;
+                                
+                                if (timeStr.includes('上午') || timeStr.includes('下午')) {
+                                    const isPM = timeStr.includes('下午');
+                                    const timeMatch = timeStr.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})/);
+                                    if (timeMatch) {
+                                        hour = parseInt(timeMatch[1]);
+                                        minute = parseInt(timeMatch[2]);
+                                        second = parseInt(timeMatch[3]);
+                                        
+                                        if (isPM && hour !== 12) hour += 12;
+                                        else if (!isPM && hour === 12) hour = 0;
+                                    }
+                                } else {
+                                    const timeMatch = timeStr.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})/);
+                                    if (timeMatch) {
+                                        hour = parseInt(timeMatch[1]);
+                                        minute = parseInt(timeMatch[2]);
+                                        second = parseInt(timeMatch[3]);
+                                    }
+                                }
+                                
+                                if (hour !== undefined) {
+                                    parsedDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), hour, minute, second);
+                                }
+                            }
+                        }
+                        
+                        // 如果還是無法解析，使用當前時間
+                        if (isNaN(parsedDate.getTime())) {
+                            parsedDate = new Date();
+                        }
+                    } catch {
+                        parsedDate = new Date();
+                    }
+                    
+                    rows.push({
+                        時間戳記: timeString,
+                        名字: values[1],
+                        需要的引薦: values[2],
+                        其他資訊: values[3],
+                        parsedDate: parsedDate
+                    });
+                }
+            }
+            
+            // 按時間戳記降序排序
+            rows.sort((a, b) => b.parsedDate.getTime() - a.parsedDate.getTime());
+            
+            // 去除重複名字，保留最新的記錄
+            const uniqueRows = [];
+            const seenNames = new Set();
+            
+            for (const row of rows) {
+                if (!seenNames.has(row.名字)) {
+                    seenNames.add(row.名字);
+                    uniqueRows.push(row);
+                }
+            }
+            
+            return uniqueRows;
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            try {
+                let date;
+                
+                // Google 表單時間戳記可能的格式
+                // 例如: "2025/8/15 下午3:45:30" 或 "2025/8/15 15:45:30"
+                if (dateString.includes('上午') || dateString.includes('下午')) {
+                    // 處理中文 AM/PM 格式
+                    let cleanedString = dateString.replace('上午', ' AM').replace('下午', ' PM');
+                    date = new Date(cleanedString);
+                } else {
+                    // 嘗試直接解析
+                    date = new Date(dateString);
+                }
+                
+                // 如果還是無效，嘗試其他常見格式
+                if (isNaN(date.getTime())) {
+                    // 嘗試將斜線替換為連字號
+                    const altFormat = dateString.replace(/\//g, '-');
+                    date = new Date(altFormat);
+                }
+                
+                // 如果還是無效，嘗試手動解析 "YYYY/M/D HH:MM:SS" 格式
+                if (isNaN(date.getTime())) {
+                    const match = dateString.match(/(\d{4})\/(\d{1,2})\/(\d{1,2})\s+(.+)/);
+                    if (match) {
+                        const [, year, month, day, timeStr] = match;
+                        let hour, minute, second;
+                        
+                        if (timeStr.includes('上午') || timeStr.includes('下午')) {
+                            const isPM = timeStr.includes('下午');
+                            const timeMatch = timeStr.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})/);
+                            if (timeMatch) {
+                                hour = parseInt(timeMatch[1]);
+                                minute = parseInt(timeMatch[2]);
+                                second = parseInt(timeMatch[3]);
+                                
+                                if (isPM && hour !== 12) hour += 12;
+                                else if (!isPM && hour === 12) hour = 0;
+                            }
+                        } else {
+                            const timeMatch = timeStr.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})/);
+                            if (timeMatch) {
+                                hour = parseInt(timeMatch[1]);
+                                minute = parseInt(timeMatch[2]);
+                                second = parseInt(timeMatch[3]);
+                            }
+                        }
+                        
+                        if (hour !== undefined) {
+                            date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), hour, minute, second);
+                        }
+                    }
+                }
+                
+                // 檢查日期是否有效
+                if (isNaN(date.getTime())) {
+                    return dateString; // 如果無法解析，返回原始字串
+                }
+                
+                return date.toLocaleString('zh-TW', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            } catch {
+                return dateString;
+            }
+        }
+
+        // 獲取姓名首字母作為頭像
+        function getNameInitial(name) {
+            return name.charAt(0);
+        }
+
+        // 載入 CSV 資料
+        async function loadCSV() {
+            const originalContent = loadBtn.innerHTML;
+            
+            // 設置載入狀態
+            loadBtn.disabled = true;
+            loadBtn.innerHTML = '<div class="spinner"></div> 載入中...';
+            errorMsg.style.display = 'none';
+            
+            try {
+                const response = await fetch(CSV_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const csvText = await response.text();
+                csvData = parseCSV(csvText);
+                
+                if (csvData.length === 0) {
+                    throw new Error('CSV 檔案中沒有找到有效資料');
+                }
+                
+                renderTable();
+                showSuccess();
+                
+            } catch (error) {
+                showError(`載入 CSV 檔案時發生錯誤: ${error.message}`);
+            } finally {
+                // 恢復按鈕狀態
+                loadBtn.disabled = false;
+                loadBtn.innerHTML = originalContent;
+            }
+        }
+
+        // 渲染表格
+        function renderTable() {
+            dataBody.innerHTML = '';
+            
+            csvData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                
+                tr.innerHTML = `
+                    <td>
+                        <div class="name-cell">
+                            <div class="avatar">
+                                ${getNameInitial(row.名字)}
+                            </div>
+                            <span>${row.名字}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="tag">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                            </svg>
+                            ${row.需要的引薦}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="info-cell" title="${row.其他資訊}">
+                            ${row.其他資訊}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="date-cell">
+                            ${formatDate(row.時間戳記)}
+                        </div>
+                    </td>
+                `;
+                
+                dataBody.appendChild(tr);
+            });
+            
+            recordCount.textContent = csvData.length;
+        }
+
+        // 顯示成功狀態
+        function showSuccess() {
+            emptyState.style.display = 'none';
+            dataSection.style.display = 'block';
+        }
+
+        // 顯示錯誤訊息
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            dataSection.style.display = 'none';
+            emptyState.style.display = 'block';
+        }
+
+        // 綁定事件監聽器
+        loadBtn.addEventListener('click', loadCSV);
+
+        // 頁面載入完成後自動載入資料
+        document.addEventListener('DOMContentLoaded', () => {
+            // 可選：頁面載入時自動執行
+            // loadCSV();
+        });
+    </script>
+</body>
+</html>
