@@ -221,6 +221,7 @@
             margin-bottom: 0.5rem;
         }
 
+        /* Mobile Responsive Design */
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
@@ -234,12 +235,123 @@
                 padding: 1.5rem;
             }
 
+            /* Hide table and show card layout on mobile */
+            .table-container table {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block !important;
+                padding: 1.5rem;
+            }
+
+            .mobile-card {
+                background: white;
+                border: 1px solid #e5e7eb;
+                border-radius: 0.75rem;
+                padding: 1.25rem;
+                margin-bottom: 1rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            .mobile-card:hover {
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                transition: box-shadow 0.2s ease;
+            }
+
+            .mobile-card-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 1rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 1px solid #f3f4f6;
+            }
+
+            .mobile-card .avatar {
+                width: 2.5rem;
+                height: 2.5rem;
+                margin-right: 0.75rem;
+                font-size: 1.1rem;
+            }
+
+            .mobile-card-name {
+                font-weight: 600;
+                font-size: 1.1rem;
+                color: #1f2937;
+            }
+
+            .mobile-card-section {
+                margin-bottom: 1rem;
+            }
+
+            .mobile-card-section:last-child {
+                margin-bottom: 0;
+            }
+
+            .mobile-card-label {
+                font-size: 0.75rem;
+                font-weight: 600;
+                color: #6b7280;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                margin-bottom: 0.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
+            }
+
+            .mobile-card-content {
+                font-size: 0.9rem;
+                color: #374151;
+                line-height: 1.5;
+            }
+
+            .mobile-referral-tag {
+                display: inline-flex;
+                align-items: flex-start;
+                gap: 0.5rem;
+                background: #f3e8ff;
+                color: #7c3aed;
+                padding: 0.75rem;
+                border-radius: 0.5rem;
+                font-size: 0.85rem;
+                font-weight: 500;
+                line-height: 1.4;
+                width: 100%;
+                word-break: break-word;
+            }
+
+            .mobile-info-content {
+                background: #f9fafb;
+                padding: 0.75rem;
+                border-radius: 0.5rem;
+                border-left: 3px solid #3b82f6;
+                word-break: break-word;
+                line-height: 1.5;
+            }
+
+            /* Hide mobile cards on desktop - this rule is overridden in mobile */
+            .mobile-cards {
+                display: none;
+            }
+        }
+
+        /* Desktop styles */
+        @media (min-width: 769px) {
+            .mobile-cards {
+                display: none !important;
+            }
+            
+            .table-container table {
+                display: table !important;
+            }
+            
             th, td {
-                padding: 0.75rem 1rem;
+                padding: 1rem 1.5rem;
             }
 
             .info-cell {
-                max-width: 150px;
+                max-width: 200px;
             }
         }
     </style>
@@ -301,6 +413,10 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Mobile Cards Layout -->
+            <div id="mobileCards" class="mobile-cards">
+            </div>
         </div>
 
         <!-- Empty State -->
@@ -324,6 +440,7 @@
         const errorMsg = document.getElementById('errorMsg');
         const dataSection = document.getElementById('dataSection');
         const dataBody = document.getElementById('dataBody');
+        const mobileCards = document.getElementById('mobileCards');
         const recordCount = document.getElementById('recordCount');
         const emptyState = document.getElementById('emptyState');
 
@@ -612,16 +729,20 @@
 
         // 渲染表格
         function renderTable() {
+            console.log('開始渲染表格，資料筆數:', csvData.length);
             dataBody.innerHTML = '';
+            mobileCards.innerHTML = '';
             
             csvData.forEach((row, index) => {
-                const tr = document.createElement('tr');
+                console.log(`渲染第 ${index + 1} 筆資料:`, row.名字);
                 
                 // 將換行符號轉換為 HTML <br> 標籤
                 const formatText = (text) => {
                     return text.replace(/\n/g, '<br>');
                 };
                 
+                // Desktop table row
+                const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>
                         <div class="name-cell">
@@ -645,10 +766,52 @@
                         </div>
                     </td>
                 `;
-                
                 dataBody.appendChild(tr);
+                
+                // Mobile card
+                const card = document.createElement('div');
+                card.className = 'mobile-card';
+                card.innerHTML = `
+                    <div class="mobile-card-header">
+                        <div class="avatar">
+                            ${getNameInitial(row.名字)}
+                        </div>
+                        <div class="mobile-card-name">${row.名字}</div>
+                    </div>
+                    
+                    <div class="mobile-card-section">
+                        <div class="mobile-card-label">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                            </svg>
+                            需要的引薦
+                        </div>
+                        <div class="mobile-referral-tag">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16" style="flex-shrink: 0; margin-top: 2px;">
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                            </svg>
+                            <span>${formatText(row.需要的引薦)}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mobile-card-section">
+                        <div class="mobile-card-label">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                            </svg>
+                            其他資訊
+                        </div>
+                        <div class="mobile-info-content">
+                            ${row.其他資訊 && row.其他資訊.trim() ? formatText(row.其他資訊) : '<span style="color: #9ca3af; font-style: italic;">無</span>'}
+                        </div>
+                    </div>
+                `;
+                mobileCards.appendChild(card);
+                console.log(`已加入手機卡片 ${index + 1}:`, card);
             });
             
+            console.log('手機卡片容器內容:', mobileCards.children.length, '個卡片');
             recordCount.textContent = csvData.length;
         }
 
