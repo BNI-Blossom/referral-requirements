@@ -16,6 +16,8 @@
             background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 50%, #f3e5f5 100%);
             min-height: 100vh;
             color: #333;
+            font-size: 18px; /* 增加基礎字體大小 */
+            line-height: 1.6; /* 增加行高便於閱讀 */
         }
 
         .container {
@@ -38,7 +40,7 @@
 
         .header p {
             color: #6b7280;
-            font-size: 1.1rem;
+            font-size: 1.2rem; /* 增加副標題字體 */
         }
 
         .load-section {
@@ -54,10 +56,10 @@
             background: #2563eb;
             color: white;
             border: none;
-            padding: 1rem 2rem;
+            padding: 1.2rem 2.5rem; /* 增加按鈕內邊距 */
             border-radius: 0.5rem;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem; /* 增加按鈕字體 */
             font-weight: 600;
             transition: all 0.2s;
             display: flex;
@@ -96,6 +98,7 @@
             padding: 1rem;
             margin-bottom: 1.5rem;
             color: #dc2626;
+            font-size: 1rem; /* 增加錯誤訊息字體 */
         }
 
         .data-section {
@@ -136,18 +139,19 @@
         }
 
         th {
-            padding: 1rem 1.5rem;
+            padding: 1.2rem 1.5rem; /* 增加表格內邊距 */
             text-align: left;
             font-weight: 600;
             color: #374151;
             border-bottom: 1px solid #e5e7eb;
-            font-size: 0.875rem;
+            font-size: 1rem; /* 增加表格標題字體 */
         }
 
         td {
-            padding: 1rem 1.5rem;
+            padding: 1.2rem 1.5rem; /* 增加表格內邊距 */
             border-bottom: 1px solid #f3f4f6;
-            font-size: 0.875rem;
+            font-size: 1rem; /* 增加表格內容字體 */
+            line-height: 1.5; /* 增加行高 */
         }
 
         tbody tr:hover {
@@ -183,12 +187,13 @@
             gap: 0.25rem;
             background: #f3e8ff;
             color: #7c3aed;
-            padding: 0.5rem 0.75rem;
+            padding: 0.6rem 0.9rem; /* 增加標籤內邊距 */
             border-radius: 9999px;
-            font-size: 0.75rem;
+            font-size: 0.9rem; /* 增加標籤字體 */
             font-weight: 500;
             max-width: 100%;
             word-wrap: break-word;
+            line-height: 1.4; /* 增加行高 */
         }
 
         .date-cell {
@@ -200,6 +205,8 @@
             max-width: 200px;
             color: #374151;
             word-wrap: break-word;
+            font-size: 1rem; /* 增加資訊欄位字體 */
+            line-height: 1.5; /* 增加行高 */
         }
 
         .empty-state {
@@ -276,7 +283,7 @@
 
             .mobile-card-name {
                 font-weight: 600;
-                font-size: 1.1rem;
+                font-size: 1.3rem; /* 增加手機版姓名字體 */
                 color: #1f2937;
             }
 
@@ -289,7 +296,7 @@
             }
 
             .mobile-card-label {
-                font-size: 0.75rem;
+                font-size: 0.85rem; /* 增加標籤字體 */
                 font-weight: 600;
                 color: #6b7280;
                 text-transform: uppercase;
@@ -301,9 +308,9 @@
             }
 
             .mobile-card-content {
-                font-size: 0.9rem;
+                font-size: 1.1rem; /* 增加內容字體 */
                 color: #374151;
-                line-height: 1.5;
+                line-height: 1.6; /* 增加行高 */
             }
 
             .mobile-referral-tag {
@@ -312,22 +319,23 @@
                 gap: 0.5rem;
                 background: #f3e8ff;
                 color: #7c3aed;
-                padding: 0.75rem;
+                padding: 0.9rem; /* 增加內邊距 */
                 border-radius: 0.5rem;
-                font-size: 0.85rem;
+                font-size: 1rem; /* 增加字體 */
                 font-weight: 500;
-                line-height: 1.4;
+                line-height: 1.5; /* 增加行高 */
                 width: 100%;
                 word-break: break-word;
             }
 
             .mobile-info-content {
                 background: #f9fafb;
-                padding: 0.75rem;
+                padding: 0.9rem; /* 增加內邊距 */
                 border-radius: 0.5rem;
                 border-left: 3px solid #3b82f6;
                 word-break: break-word;
-                line-height: 1.5;
+                line-height: 1.6; /* 增加行高 */
+                font-size: 1rem; /* 增加字體 */
             }
 
             /* Hide mobile cards on desktop - this rule is overridden in mobile */
@@ -347,7 +355,7 @@
             }
             
             th, td {
-                padding: 1rem 1.5rem;
+                padding: 1.2rem 1.5rem; /* 增加手機版表格內邊距 */
             }
 
             .info-cell {
@@ -366,7 +374,7 @@
         <!-- Load Section -->
         <div class="load-section">
             <div style="text-align: center;">
-                <p style="margin-bottom: 1rem; color: #6b7280;">
+                <p style="margin-bottom: 1rem; color: #6b7280; font-size: 1.1rem;">
                     資料如需更新，請點擊下方按鈕
                 </p>
                 <button id="loadBtn" class="load-btn">
